@@ -63,49 +63,6 @@ In this homework part, you will play the role of a ***software consultant*** hir
   * How to exploit it  
   * The corresponding CWE-ID (i.e., vulnerability type)
 
-### **Answer to Q1:**
-
-After analyzing the web application code, I identified the following 4 critical security vulnerabilities:
-
-#### **Vulnerability 1: SQL Injection**
-- **Location**: `tasktracker/views.py`, line 31 in the `add()` function
-- **Code**: 
-  ```python
-  cursor.executescript(f"INSERT INTO tasktracker_task(user_id, status, due_date, title) VALUES ({request.user.id},'{status}', '{due_date}', '{title}')")
-  ```
-- **How to exploit**: An attacker can inject malicious SQL code through the `title`, `due_date`, or `status` fields. For example, setting the title to `'; DROP TABLE tasktracker_task; --` would delete the entire task table.
-- **CWE-ID**: CWE-89 (SQL Injection)
-
-#### **Vulnerability 2: Cross-Site Scripting (XSS)**
-- **Location**: `tasktracker/templates/index.html`, line 12
-- **Code**: 
-  ```html
-  <b>Task #{{t.id}}: {{t.title | safe}}</b>
-  ```
-- **How to exploit**: The `safe` filter disables Django's automatic HTML escaping, allowing stored XSS attacks. An attacker can create a task with a malicious title like `<script>alert('XSS')</script>` or `<img src=x onerror=alert('XSS')>` which will execute when other users view the task list.
-- **CWE-ID**: CWE-79 (Cross-Site Scripting)
-
-#### **Vulnerability 3: Insecure Direct Object Reference (IDOR)**
-- **Location**: `tasktracker/views.py`, lines 38-42 in the `delete()` function
-- **Code**: 
-  ```python
-  def delete(request, pk):
-      task = Task.objects.get(id = pk)
-      task.delete()
-      return HttpResponseRedirect(reverse(f'tasktracker:index'))
-  ```
-- **How to exploit**: The function doesn't verify that the task belongs to the authenticated user. An attacker can delete any task by changing the `pk` parameter in the URL (e.g., `/tasktracker/delete/1/`, `/tasktracker/delete/2/`, etc.) to access and delete other users' tasks.
-- **CWE-ID**: CWE-639 (Authorization Bypass Through User-Controlled Key)
-
-#### **Vulnerability 4: Information Disclosure - Hard-coded Secret Key**
-- **Location**: `website/settings.py`, line 23
-- **Code**: 
-  ```python
-  SECRET_KEY = '#n6kks0cs$a-7k*67)k(nof$7z6&l+u97ea)nl_r8frg_mrmd1'
-  ```
-- **How to exploit**: The Django secret key is hard-coded in the source code and exposed in version control. This key is used for cryptographic signing of session data, CSRF tokens, and password reset tokens. An attacker with access to this key can forge session cookies, bypass CSRF protection, and potentially compromise user accounts.
-- **CWE-ID**: CWE-798 (Use of Hard-coded Credentials)
-
 ## **Part 3: Cracking Passwords**
 
 Now, you will play the role of a ***hacker*** that will try to brute force leaked hashed passwords. The repository has three files with 30 passwords each that were hashed using **MD5**. 
