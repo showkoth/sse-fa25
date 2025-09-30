@@ -1,0 +1,52 @@
+
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+
+% Header and footer
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Part 4: Research Synthesis}
+\lhead{HW2 - Pythia Paper Analysis}
+\cfoot{\thepage}
+
+% Title formatting
+\titleformat{\section}{\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{1em}{}
+
+\begin{document}
+
+\title{\textbf{Home Work 2 \\ \large Part 4: Research Synthesis}}
+\author{Showkot Hossain}
+\date{}
+\maketitle
+
+\section{Motivation, Problem, and Solution}
+
+Pythia addresses the problem of identifying dangerous data flows in Django applications that lead to Cross-Site Scripting (XSS) and Cross-Site Request Forgery (CSRF) vulnerabilities. Although Django provides built-in protections by default, developers frequently disable them using constructs such as the \texttt{|safe} filter, the \texttt{@csrf\_exempt} decorator, or the \texttt{mark\_safe()} function. Such actions reintroduce serious security flaws into applications that are otherwise considered secure.
+
+The main challenge lies in Django's complex template inheritance system, which makes it very difficult to track how data flows across multiple layers of templates and views. A single template with security disabled can influence many other views that extend or include it. Traditional static analysis tools are not designed to handle these Django-specific features and often result in false positives or overlook critical vulnerabilities. Manual analysis is impractical for large projects.
+
+To address this, Pythia introduces a Django-specific static analysis approach. It defines two sink categories: \textbf{template sinks} (e.g., \texttt{|safe}, \texttt{autoescape off}) and \textbf{in-view sinks} (e.g., \texttt{@csrf\_exempt}, \texttt{mark\_safe()}). By recursively analyzing Django’s template Abstract Syntax Trees (ASTs), Pythia can trace user data from sources, through views and templates, into these sinks. This framework-aware approach enables the tool to detect vulnerabilities that generic scanners would miss.
+
+\section{Effectiveness for Part 2 Vulnerabilities}
+
+According to my understanding, Pythia would have helped detect only 1 out of 4 vulnerabilities identified in Part 2. Its focus on Django-specific issues limits its usefulness for other classes of security flaws.
+
+\subsection{Vulnerability Pythia Would Detect}
+\textbf{Cross-Site Scripting (XSS):} In \texttt{tasktracker/templates/index.html}, the use of \texttt{\{\{t.title | safe\}\}} disables HTML escaping and introduces a stored XSS vulnerability. Pythia would recognize the \texttt{|safe} filter as a dangerous template sink and trace the flow of user input into this sink. Its inheritance analysis ensures that all views extending this template are flagged, making it highly effective at finding this issue.
+
+\subsection{Vulnerabilities Pythia Would Not Detect}
+\textbf{SQL Injection:} The SQL injection in \texttt{views.py} line 37 relies on unsafe query string concatenation using \texttt{cursor.executescript()}. Since Pythia only defines sinks related to XSS and CSRF, it cannot detect SQL injection vulnerabilities. Identifying such issues requires database-aware taint analysis, which Pythia does not attempt.
+
+\textbf{Insecure Direct Object Reference (IDOR):} In the \texttt{delete()} function, tasks can be deleted without verifying ownership. Detecting this flaw requires semantic analysis of authorization checks, which goes beyond Pythia’s scope. While the tool traces data flows, it does not understand the absence of business logic validations like access control.
+
+\textbf{Hard-coded Secret Key:} The presence of a secret key in \texttt{settings.py} is a static configuration issue. Because Pythia focuses only on Django’s Model-View-Template components, it cannot analyze configuration files or detect hard-coded secrets. Tools like TruffleHog or GitGuardian are better suited for this type of vulnerability.
+
+\subsection{Overall Assessment}
+Overall, Pythia could confidently detect 1 out of 4 vulnerabilities from Part 2, specifically the XSS issue. This reflects its design as a specialized tool that prioritizes accuracy and Django-awareness over breadth. It is valuable for uncovering overlooked XSS/CSRF vulnerabilities with low false positives but cannot replace more general tools. For comprehensive coverage, Pythia should be used alongside SQL injection scanners, secret scanners, and manual security reviews to identify logic flaws such as IDOR.
+
+\end{document}
