@@ -32,9 +32,10 @@ def add(request):
 			try:
 				task.full_clean() 
 				# if no exception was thrown, form was validated
-				# we proceed to save the task in the database
-				with connection.cursor() as cursor:
-					cursor.executescript(f"INSERT INTO tasktracker_task(user_id, status, due_date, title) VALUES ({request.user.id},'{status}', '{due_date}', '{title}')")				
+				# we proceed to save the task in the database using Django ORM
+				# FIX: Replaced vulnerable raw SQL with Django ORM to prevent SQL injection
+				# Django ORM automatically sanitizes inputs and uses parameterized queries
+				task.save()
 			except ValidationError as e:
 				# renders the web page again with an error message
 				return render(request, 'add.html', {"errors": e.message_dict})
@@ -49,8 +50,16 @@ def add(request):
 
 # Deletes a task (based on its primary key) and redirect it back to index page
 def delete(request, pk):
-	# uses ORM to delete the task
-	task = Task.objects.get(id = pk)
-	task.delete()
+	# FIX: Added authorization check to prevent IDOR vulnerability
+	# Only allow users to delete their own tasks
+	if request.user.is_authenticated:
+		try:
+			# Filter by both ID and user to ensure ownership
+			task = Task.objects.get(id=pk, user=request.user)
+			task.delete()
+		except Task.DoesNotExist:
+			# Task doesn't exist or doesn't belong to the user
+			# Redirect to index without deletion
+			pass
 	# redirects user to index page
 	return HttpResponseRedirect(reverse(f'tasktracker:index'))
