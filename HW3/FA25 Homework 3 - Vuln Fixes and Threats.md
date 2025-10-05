@@ -1,38 +1,10 @@
 
-
 ## **Part 1: Fixing Issues from HW2**
 
 In HW2, you played the role of a *software consultant* hired to identify the security vulnerabilities in a Web application. In this homework, you will now play the role of the *software developer* that will fix the identified security vulnerabilities. 
 
 * **Q1:** Change the code provided to fix ~~all~~ ***at least two*** of the vulnerabilities you found in the web application.   
 * **Q2:** Include in the code comments with an explanation about the fix. 
-
-## **Part 1: Fixing Issues from HW2**
-
-In HW2, you played the role of a *software consultant* hired to identify the security vulnerabilities in a Web application. In this homework, you will now play the role of the *software developer* that will fix the identified security vulnerabilities. 
-
-* **Q1:** Change the code provided to fix ~~all~~ ***at least two*** of the vulnerabilities you found in the web application.   
-* **Q2:** Include in the code comments with an explanation about the fix. 
-
-### **COMPLETED ✅**
-
-**Fixed Application Location:** `../HW2/website/` directory (original HW2 files modified)
-
-**Vulnerabilities Fixed:** All 4 critical vulnerabilities identified in HW2 have been fixed:
-
-1. **SQL Injection (CWE-89)** - Fixed in `../HW2/website/tasktracker/views.py`
-   - Replaced raw SQL with Django ORM to prevent injection attacks
-
-2. **Cross-Site Scripting - XSS (CWE-79)** - Fixed in `../HW2/website/tasktracker/templates/index.html`
-   - Removed `| safe` filter to enable automatic HTML escaping
-
-3. **Insecure Direct Object Reference - IDOR (CWE-639)** - Fixed in `../HW2/website/tasktracker/views.py`
-   - Added authorization checks to ensure users can only access their own tasks
-
-4. **Hard-coded Secret Key (CWE-321)** - Fixed in `../HW2/website/website/settings.py`
-   - Moved secret key to environment variable
-
-**Documentation:** See `../HW2/VULNERABILITY_FIXES.md` for detailed explanations of each fix with code comments. 
 
 ## **Part 2: Identification of Threats**
 
