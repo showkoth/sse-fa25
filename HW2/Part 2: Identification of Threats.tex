@@ -1,0 +1,87 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows, positioning}
+
+\title{Part 2: Identification of Threats}
+\author{Showkot Hossain}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+
+\section{Q1: Threat Model Profile}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|p{3cm}|p{10cm}|}
+\hline
+\rowcolor{blue!20}
+\textbf{ID} & 1 \\
+\hline
+\rowcolor{blue!20}
+\textbf{Name} & SQL Injection \\
+\hline
+\textbf{Description} & An adversary might try to insert SQL commands or special characters into the data they supply, such as task titles, due dates, or login credentials. If this data is not sanitized before being forwarded to the database, it could result in a SQL injection vulnerability allowing unauthorized database access or manipulation. \\
+\hline
+\textbf{STRIDE Classification} & \begin{minipage}{10cm}
+\begin{itemize}
+\item Tampering
+\item Information Disclosure
+\item Elevation of Privilege
+\end{itemize}
+\end{minipage} \\
+\hline
+\textbf{Entry Points} & (1.2) Add Task Page; (1.3) Login Page\\
+\hline
+\textbf{Assets} & (1.1) User Login Details; (1.2) Task Details \\
+\hline
+\textbf{Known Mitigations} & Using parameterized queries and Django ORM \\
+\hline
+\textbf{Mitigated?} & Yes (see vulnerability \#1 in Part 1) \\
+\hline
+\end{tabular}
+\caption{Threat Model Profile - SQL Injection Vulnerability}
+\end{table}
+
+\section{Q2: Data Flow Diagram for User Task Addition Feature}
+
+The following Data Flow Diagram illustrates the process of adding a new task in the Task Tracker application:
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{hw3/DFD.jpg} % Make sure the path is correct
+    \caption{DFD for User Task Addition}
+    \label{fig:dfd_user_task_addition}
+\end{figure}
+
+\vspace{1cm}
+
+\textbf{Data Flow Description:}
+\begin{enumerate}
+\item User sends an ``Add task request" along with the session data to the web application
+\item The request is routed through urls.py to the appropriate view function  
+\item views.py (add() function) requests the add.html template
+\item The template file is returned to the view function
+\item User submits task form and session data via POST request
+\item views.py validates the form and session data and then executes SQL query to save task
+\item Database stores the task data and returns confirmation
+\item User receives HTTP response confirming task creation
+\end{enumerate}
+
+
+
+
+\end{document}
