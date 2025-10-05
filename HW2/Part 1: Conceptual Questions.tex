@@ -1,0 +1,33 @@
+
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+
+\title{Home Work 2 \\ \large Part 1: Conceptual Questions}
+\author{Showkot Hossain}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{Q1. Purpose of \{\% csrf\_token \%\}}
+The \{\% csrf\_token \%\} tag inserts a hidden form field containing a CSRF token, 
+which Django’s middleware checks against the CSRF cookie. This ensures that 
+form submissions originate from trusted sources and protects against Cross-Site 
+Request Forgery (CSRF) attacks.
+
+\section*{Q2. Consequences of forgetting \{\% csrf\_token \%\}}
+If the tag is omitted:
+\begin{itemize}[noitemsep]
+    \item Django rejects the request with a \textbf{403 Forbidden} error since the CSRF check fails.
+    \item The application becomes vulnerable to CSRF attacks, where a malicious site could perform unauthorized actions.
+    \item Legitimate users may be blocked from submitting valid forms.
+\end{itemize}
+
+\section*{Q3. CWE ID}
+The related weakness is \textbf{CWE-352: Cross-Site Request Forgery (CSRF)}.
+
+\end{document}

@@ -1,0 +1,159 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+
+% Code listing settings
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!10},
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red},
+    showstringspaces=false,
+    tabsize=4,
+    captionpos=b
+}
+
+% Python code style
+\lstdefinestyle{python}{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red},
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false
+}
+
+% HTML code style
+\lstdefinestyle{html}{
+    language=HTML,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red},
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    showstringspaces=false
+}
+
+% Header and footer
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Part 2: Finding Issues}
+\lhead{HW2 - Security Vulnerability Analysis}
+\cfoot{\thepage}
+
+% Title formatting
+\titleformat{\section}{\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{1em}{}
+
+\begin{document}
+
+\title{\textbf{Home Work 2 \\ \large Part 2: Finding Issues}}
+\author{Showkot Hossain}
+\date{}
+\maketitle
+
+\section{Q1: Vulnerability Analysis}
+
+I identified \textbf{4 critical security vulnerabilities} in the Django task management web application:
+
+\vspace{0.5cm}
+\hrule
+\vspace{0.5cm}
+
+\subsection{Vulnerability 1: SQL Injection}
+
+\textbf{Location:} \texttt{tasktracker/views.py}, line 37 in \texttt{add()} function
+
+\textbf{Vulnerable Code:}
+\begin{lstlisting}[style=python]
+cursor.executescript(f"INSERT INTO tasktracker_task(user_id, status, due_date, title) VALUES ({request.user.id},'{status}', '{due_date}', '{title}')")
+\end{lstlisting}
+
+\textbf{Exploitation:} User input is directly concatenated into SQL queries without sanitization. An attacker can inject malicious SQL through form fields.
+
+\textbf{Example:} Setting title to \texttt{'; DROP TABLE tasktracker\_task; --} would delete the entire task table.
+
+\textbf{CWE-ID:} CWE-89 (SQL Injection)
+
+\vspace{0.5cm}
+\hrule
+\vspace{0.5cm}
+
+\subsection{Vulnerability 2: Cross-Site Scripting (XSS)}
+
+\textbf{Location:} \texttt{tasktracker/templates/index.html}, line 11
+
+\textbf{Vulnerable Code:}
+\begin{lstlisting}[style=html]
+<b>Task #{{t.id}}: {{t.title | safe}}</b>
+\end{lstlisting}
+
+\textbf{Exploitation:} The \texttt{safe} filter disables HTML escaping, enabling stored XSS attacks. An attacker can create a task with malicious JavaScript in the title.
+
+\textbf{Example:} Task title \texttt{<script>alert('XSS')</script>} executes when users view the task list, potentially stealing cookies or hijacking sessions.
+
+\textbf{CWE-ID:} CWE-79 (Cross-Site Scripting)
+
+\vspace{0.5cm}
+\hrule
+\vspace{0.5cm}
+
+\subsection{Vulnerability 3: Insecure Direct Object Reference (IDOR)}
+
+\textbf{Location:} \texttt{tasktracker/views.py}, lines 51-56 in \texttt{delete()} function
+
+\textbf{Vulnerable Code:}
+\begin{lstlisting}[style=python]
+def delete(request, pk):
+    task = Task.objects.get(id = pk)
+    task.delete()
+    return HttpResponseRedirect(reverse(f'tasktracker:index'))
+\end{lstlisting}
+
+\textbf{Exploitation:} The function doesn't verify task ownership. Any authenticated user can delete other users' tasks by manipulating the URL parameter.
+
+\textbf{Example:} User can access \texttt{/tasktracker/delete/1/} to delete any task with ID 1, regardless of ownership.
+
+\textbf{CWE-ID:} CWE-639 (Authorization Bypass Through User-Controlled Key) \\
+(Also related: \textbf{CWE-862:} Missing Authorization)
+
+\vspace{0.5cm}
+\hrule
+\vspace{0.5cm}
+
+\subsection{Vulnerability 4: Hard-coded Secret Key}
+
+\textbf{Location:} \texttt{website/settings.py}, line 23
+
+\textbf{Vulnerable Code:}
+\begin{lstlisting}[style=python]
+SECRET_KEY = '#n6kks0cs$a-7k*67)k(nof$7z6&l+u97ea)nl_r8frg_mrmd1'
+\end{lstlisting}
+
+\textbf{Exploitation:} The Django secret key is exposed in source code. Attackers can use this key to forge session cookies, bypass CSRF protection, and generate valid password reset tokens.
+
+\textbf{Example:} With the secret key, an attacker can impersonate any user by crafting valid Django session data.
+
+
+\textbf{CWE-IDs:} \\ 
+- \textbf{CWE-321: Use of Hard-coded Cryptographic Key} (most precise) \\ 
+- \textbf{CWE-798: Use of Hard-coded Credentials} (also related)
+
+\vspace{0.5cm}
+\hrule
+\vspace{0.5cm}
+
+\end{document}
