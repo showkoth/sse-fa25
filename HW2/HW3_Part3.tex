@@ -1,0 +1,21 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1in, top=0.75in]{geometry}
+
+\title{Lessons Learned from Industrial Application and Engineer Interviews}
+\author{Showkot Hossain}
+\date{}
+\begin{document}
+\maketitle
+The authors applied their RMCM approach to EDLAH2, a European Union healthcare project developing a multi-device software ecosystem for elderly care. The system involved mobile apps, wearable devices, web applications, and databases processing sensitive personal data, providing valuable insights into the approach's practical feasibility and challenges.
+The case study demonstrated RMCM's scalability, with the team successfully modeling 9 use cases, 4 security use cases, 17 misuse cases, and 3 mitigation schemes. The extensive use of RMCM keywords (142 MALICIOUS instances, 120 DATA instances) and control flow structures showed the method provided sufficient expressiveness for real-world security requirements. The structured approach proved particularly valuable in identifying security threats not captured in initial documentation, such as SQL injection attacks and insecure data storage vulnerabilities.
+
+The RMCM-V tool proved highly effective, identifying 29 conformance warnings and 17 consistency issues in initial specifications. Notably, only 6\% of conformance issues and 23\% of consistency issues related to security-specific extensions, indicating engineers found the security keywords relatively easy to use after training. All issues were corrected in one iteration, demonstrating the tool's practical utility. Engineers particularly valued the automated consistency checking capabilities.
+Engineer feedback revealed generally positive perceptions, with ratings of 2.5 to 3.5 on a 4-point scale. Engineers found misuse case diagrams simple enough for stakeholder communication and would likely adopt them in practice. They agreed RMCM provided sufficient expressiveness to capture security threats and that the method's steps were easy to follow with reasonable learning effort.
+
+However, several challenges emerged. The most significant barrier was organizational adoption rather than technical capability. Despite clear benefits, convincing teams to invest additional effort in systematic security requirements modeling could be challenging, requiring demonstration of return on investment. The methodology's identification of 14 vulnerabilities through derived test cases provided concrete evidence of value.
+The reception of mitigation schemes proved more mixed (scores of 2.25 to 2.5), with less experienced engineers showing more resistance, related to reluctance in documenting development choices. Despite this hesitation, such documentation proved necessary for demonstrating compliance with security standards. Engineers also highlighted the need for continuous evolution of security extensions due to rapidly changing technology, viewing them as a knowledge repository requiring regular updates.
+The use-case driven foundation proved crucial for practical applicability. Building on this familiar foundation facilitated stakeholder participation while maintaining accessibility for non-technical stakeholders. The three development teams, totaling ten engineers with varying experience levels, applied the methodology independently after training, demonstrating its teachability.
+
+% Overall, the industrial application validated RMCM's feasibility for capturing security requirements in multi-device software ecosystems. While requiring initial training, engineers found it practical and beneficial. The main challenge was organizational adoption rather than technical capability, suggesting that demonstrating concrete value through security testing and vulnerability detection would be important for wider industrial adoption.
+\end{document}
