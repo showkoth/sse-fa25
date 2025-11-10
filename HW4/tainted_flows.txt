@@ -1,0 +1,43 @@
+=== CWE-78 OS Command Injection - Tainted Flow Analysis ===
+Analysis Date: Sun Nov 09 20:45:20 EST 2025
+
+SOURCES (Tainted Input):
+------------------------------------------------------
+Total sources found: 1
+
+SOURCE:
+  Statement: NORMAL bad:17 = invokevirtual < Application, Ljava/io/BufferedReader, readLine()Ljava/lang/String; > 14 @48 exception:16 Node: < Application, LCWE78_OS_Command_Injection__connect_tcp_01, bad()V > Context: CallStringContext: [ AbstractTestCase.runTest(Ljava/lang/String;)V@149 ]
+  Instruction: 17 = invokevirtual < Application, Ljava/io/BufferedReader, readLine()Ljava/lang/String; > 14 @48 exception:16
+  Method: CWE78_OS_Command_Injection__connect_tcp_01.bad()V
+  Line: CWE78_OS_Command_Injection__connect_tcp_01.java(30,-1-30,-1)
+
+
+VULNERABLE SINKS (Reachable from tainted sources):
+------------------------------------------------------
+Total vulnerable sinks: 1
+
+VULNERABLE SINK:
+  Statement: NORMAL bad:109 = invokevirtual < Application, Ljava/lang/Runtime, exec(Ljava/lang/String;)Ljava/lang/Process; > 99,107 @364 exception:108 Node: < Application, LCWE78_OS_Command_Injection__connect_tcp_01, bad()V > Context: CallStringContext: [ AbstractTestCase.runTest(Ljava/lang/String;)V@149 ]
+  Instruction: 109 = invokevirtual < Application, Ljava/lang/Runtime, exec(Ljava/lang/String;)Ljava/lang/Process; > 99,107 @364 exception:108
+  Method: CWE78_OS_Command_Injection__connect_tcp_01.bad()V
+  Line: CWE78_OS_Command_Injection__connect_tcp_01.java(52,-1-52,-1)
+
+
+NON-VULNERABLE SINKS (Not reachable from tainted sources):
+------------------------------------------------------
+Total non-vulnerable sinks: 1
+
+NON-VULNERABLE SINK:
+  Statement: NORMAL goodG2B:27 = invokevirtual < Application, Ljava/lang/Runtime, exec(Ljava/lang/String;)Ljava/lang/Process; > 17,25 @49 exception:26 Node: < Application, LCWE78_OS_Command_Injection__connect_tcp_01, goodG2B()V > Context: CallStringContext: [ CWE78_OS_Command_Injection__connect_tcp_01.good()V@1 ]
+  Instruction: 27 = invokevirtual < Application, Ljava/lang/Runtime, exec(Ljava/lang/String;)Ljava/lang/Process; > 17,25 @49 exception:26
+  Method: CWE78_OS_Command_Injection__connect_tcp_01.goodG2B()V
+  Explanation: This sink uses hardcoded/sanitized data, not tainted input
+
+
+=== SUMMARY ===
+Total Sources: 1
+Total Sinks: 2
+Vulnerable Sinks: 1
+Non-Vulnerable Sinks: 1
+
+=== End of Report ===
