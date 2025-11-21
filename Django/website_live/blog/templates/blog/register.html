@@ -1,9 +1,0 @@
-{% extends "blog/base.html" %}
-{% block body_content %}
-    <h1>User account profile creation</h1>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Create account</button>
-    </form>
-{% endblock %}
