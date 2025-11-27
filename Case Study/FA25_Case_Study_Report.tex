@@ -1,0 +1,358 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+
+% Page setup
+\geometry{
+    a4paper,
+    left=25mm,
+    right=25mm,
+    top=25mm,
+    bottom=25mm
+}
+
+% Hyperlink setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+
+% Code listing setup
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!10},
+    captionpos=b
+}
+
+\title{\textbf{Case Study Report}}
+\author{GitHub Copilot}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Team Members}
+\begin{itemize}
+    \item GitHub Copilot - \href{mailto:copilot@github.com}{copilot@github.com}
+\end{itemize}
+
+\section*{Project’s Information}
+\begin{itemize}
+    \item \textbf{Project Website:} \url{https://www.djangoproject.com/}
+    \item \textbf{Source code:} \url{https://github.com/django/django}
+    \item \textbf{Issue tracker:} \url{https://code.djangoproject.com/}
+\end{itemize}
+
+\section*{Project Overview}
+
+\subsection*{What is the product used for?}
+Django is a high-level Python web framework that encourages rapid development and clean, pragmatic design. It is used to build secure and maintainable websites and web applications. It follows the "batteries-included" philosophy, providing many tools out-of-the-box such as an ORM, authentication system, and admin interface.
+
+\subsection*{What is the development team like?}
+The project is maintained by the Django Software Foundation (DSF), a non-profit organization. The core development is driven by a team of volunteers and "Django Fellows" (paid contractors). It has a large, active community of contributors worldwide.
+
+\subsection*{How often does the project release?}
+Django has a predictable release cycle. Feature releases happen roughly every 8 months, and Long Term Support (LTS) releases occur every 2 years. Patch releases for security and bug fixes are issued as needed.
+
+\section*{Identify Product Assets}
+
+The following assets are critical to the Django framework and applications built with it.
+
+\begin{longtable}{|l|p{4cm}|p{6cm}|l|}
+\hline
+\textbf{ID} & \textbf{Name} & \textbf{Description} & \textbf{Trust Level} \\
+\hline
+\endhead
+A1 & \textbf{User Credentials} & Passwords (hashed), API keys, and authentication tokens stored in the database. & High \\
+\hline
+A2 & \textbf{Session Data} & Information stored in cookies or server-side sessions identifying a logged-in user. & High \\
+\hline
+A3 & \textbf{Application Database} & The underlying SQL database (PostgreSQL, MySQL, SQLite) containing all application data. & High \\
+\hline
+A4 & \textbf{Source Code \& Config} & The Python source code and configuration files (settings.py) containing secrets like \texttt{SECRET\_KEY}. & High \\
+\hline
+A5 & \textbf{Admin Interface} & The built-in web-based interface for managing application content. & High \\
+\hline
+A6 & \textbf{CSRF Tokens} & Tokens used to validate that POST requests come from authenticated users. & Medium \\
+\hline
+\end{longtable}
+
+\subsection*{Future Changes:}
+\begin{itemize}
+    \item \textbf{Evolution:} As Django moves towards more asynchronous support (ASGI), the handling of request data and session assets might evolve to support WebSockets and long-lived connections more natively.
+    \item \textbf{Obsolescence:} Older authentication mechanisms or specific cryptographic algorithms used for password hashing (e.g., older SHA versions) may become obsolete and replaced by stronger defaults (like Argon2).
+\end{itemize}
+
+\section*{Architecture Overview}
+
+\subsection*{What the application does:}
+Django acts as the server-side framework for web applications. It handles HTTP requests, routes them to appropriate views, interacts with the database via an ORM, renders HTML templates, and returns HTTP responses.
+
+\subsection*{Components \& Subsystems:}
+\begin{enumerate}
+    \item \textbf{Request/Response Handling (WSGI/ASGI):} The entry point for all web traffic.
+    \item \textbf{URL Dispatcher:} Maps URL patterns to Python view functions.
+    \item \textbf{Middleware:} A hook framework for processing requests/responses globally (e.g., SecurityMiddleware, SessionMiddleware).
+    \item \textbf{View Layer:} Contains the logic to process data and prepare responses.
+    \item \textbf{Model Layer (ORM):} Abstraction for database interactions.
+    \item \textbf{Template Engine:} Generates HTML dynamically.
+    \item \textbf{Contrib Packages:} Built-in apps like \texttt{auth} (authentication), \texttt{admin} (content management), and \texttt{sessions}.
+\end{enumerate}
+
+\subsection*{Security Features:}
+\begin{itemize}
+    \item \textbf{Middleware:} \texttt{CsrfViewMiddleware} protects against Cross-Site Request Forgery. \texttt{SecurityMiddleware} handles HSTS, X-Content-Type-Options, etc.
+    \item \textbf{ORM:} Automatically escapes parameters to prevent SQL Injection.
+    \item \textbf{Templates:} Auto-escaping of variables to prevent Cross-Site Scripting (XSS).
+    \item \textbf{Auth System:} Uses PBKDF2 password hashing by default.
+\end{itemize}
+
+\subsection*{Cost of Mistakes:}
+\begin{itemize}
+    \item A mistake in the \textbf{ORM} or \textbf{Template} engine could lead to widespread SQLi or XSS vulnerabilities across all Django sites.
+    \item A flaw in \textbf{Middleware} (e.g., session handling) could compromise user authentication globally.
+\end{itemize}
+
+\subsection*{Susceptibility:}
+\begin{itemize}
+    \item \textbf{Custom Views:} This is where developers write custom code, making it the most susceptible area for logic bugs and authorization failures.
+\end{itemize}
+
+\subsection*{External Interactions:}
+\begin{itemize}
+    \item Interacts with \textbf{Database Servers} (SQL injection risk if raw queries are used).
+    \item Interacts with \textbf{Cache Servers} (Redis/Memcached).
+    \item Interacts with \textbf{Web Servers} (Nginx/Apache) via WSGI/ASGI.
+\end{itemize}
+
+\subsection*{Technologies:}
+\begin{itemize}
+    \item \textbf{Language:} Python.
+    \item \textbf{Dependencies:} \texttt{asgiref}, \texttt{sqlparse}, \texttt{tzdata} (and optional drivers like \texttt{psycopg2}).
+\end{itemize}
+
+\section*{Decompose the Application}
+
+\subsection*{Security Profile:}
+\begin{itemize}
+    \item \textbf{Trust Boundaries:}
+    \begin{itemize}
+        \item \textbf{Internet vs. Web Server:} The primary boundary where untrusted HTTP requests enter.
+        \item \textbf{Web Server vs. Database:} Trusted internal connection, but data sent must be sanitized.
+        \item \textbf{Application vs. File System:} Handling user uploads.
+    \end{itemize}
+    \item \textbf{Entry Points:}
+    \begin{itemize}
+        \item HTTP Requests (GET, POST, etc.) to defined URLs.
+        \item Management Commands (CLI).
+        \item Uploaded Files.
+    \end{itemize}
+    \item \textbf{Privileged Code:}
+    \begin{itemize}
+        \item \texttt{django.contrib.admin}: Allows full access to database records.
+        \item \texttt{settings.py}: Defines security configurations.
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Mitigation Techniques:}
+\begin{itemize}
+    \item \textbf{Distrustful Decomposition:} Django separates logic into apps, but they share the same process memory.
+    \item \textbf{Defense in Depth:} Uses secure defaults (e.g., \texttt{DEBUG=False} in production is critical).
+\end{itemize}
+
+\subsection*{High Level Data Flow Diagram:}
+
+\begin{figure}[H]
+\centering
+\begin{lstlisting}[language=bash, caption={Mermaid Diagram Source}]
+graph LR
+    User[User/Browser] -- HTTP Request --> WebServer[Web Server (Nginx)]
+    WebServer -- WSGI/ASGI --> Middleware[Django Middleware]
+    Middleware --> URLConf[URL Dispatcher]
+    URLConf --> View[View Logic]
+    View -- Read/Write --> ORM[Model / ORM]
+    ORM -- SQL --> DB[(Database)]
+    DB -- Data --> ORM
+    ORM --> View
+    View -- Context --> Template[Template Engine]
+    Template -- HTML --> View
+    View -- HTTP Response --> Middleware
+    Middleware --> WebServer
+    WebServer --> User
+\end{lstlisting}
+\caption{High Level Data Flow Diagram (Mermaid Source)}
+\end{figure}
+
+\section*{Identify the Threats}
+
+We identified threats based on the STRIDE model:
+\begin{enumerate}
+    \item \textbf{Spoofing:} Attacker impersonating a logged-in user.
+    \item \textbf{Tampering:} Modifying session cookies to escalate privileges.
+    \item \textbf{Repudiation:} A user performs a malicious action (e.g., deleting data) and denies it.
+    \item \textbf{Information Disclosure:} Leaking stack traces or configuration secrets.
+    \item \textbf{Denial of Service:} Overloading the server with large payloads or complex queries.
+    \item \textbf{Elevation of Privilege:} Gaining admin access without authorization.
+\end{enumerate}
+
+\section*{Document the Threats}
+
+\begin{longtable}{|p{3cm}|p{12cm}|}
+\hline
+\textbf{ID} & \textbf{T1} \\
+\hline
+\textbf{Name} & \textbf{Session Hijacking via Unsecured Connection} \\
+\hline
+\textbf{Description} & If the application is not served over HTTPS, an attacker on the same network can intercept the session cookie (Spoofing) and impersonate the user. \\
+\hline
+\textbf{Category} & Spoofing \\
+\hline
+\textbf{Entry Points} & HTTP Request Headers (Cookie) \\
+\hline
+\textbf{Relevant Assets} & A2 (Session Data), A1 (User Credentials) \\
+\hline
+\textbf{Mitigation} & Enforce HTTPS (HSTS), set \texttt{SESSION\_COOKIE\_SECURE = True}, and \texttt{CSRF\_COOKIE\_SECURE = True} in settings. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{3cm}|p{12cm}|}
+\hline
+\textbf{ID} & \textbf{T2} \\
+\hline
+\textbf{Name} & \textbf{SQL Injection via Raw Queries} \\
+\hline
+\textbf{Description} & Although the ORM is secure, a developer might use \texttt{raw()} queries or \texttt{extra()} with unsanitized user input, allowing an attacker to tamper with the database. \\
+\hline
+\textbf{Category} & Tampering \\
+\hline
+\textbf{Entry Points} & URL Parameters, Form Inputs \\
+\hline
+\textbf{Relevant Assets} & A3 (Application Database) \\
+\hline
+\textbf{Mitigation} & Avoid \texttt{raw()} queries; use parameterized queries if raw SQL is absolutely necessary. Rely on the ORM's built-in filtering. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{3cm}|p{12cm}|}
+\hline
+\textbf{ID} & \textbf{T3} \\
+\hline
+\textbf{Name} & \textbf{Lack of Audit Logging for Admin Actions} \\
+\hline
+\textbf{Description} & An administrator deletes a critical user or record. Without logs, they can deny the action. Django Admin has a \texttt{LogEntry} model, but it can be cleared or disabled. \\
+\hline
+\textbf{Category} & Repudiation \\
+\hline
+\textbf{Entry Points} & Django Admin Interface \\
+\hline
+\textbf{Relevant Assets} & A3 (Application Database) \\
+\hline
+\textbf{Mitigation} & Implement immutable centralized logging (e.g., sending logs to an external SIEM) for all write operations in the admin panel. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{3cm}|p{12cm}|}
+\hline
+\textbf{ID} & \textbf{T4} \\
+\hline
+\textbf{Name} & \textbf{Debug Mode Enabled in Production} \\
+\hline
+\textbf{Description} & Leaving \texttt{DEBUG = True} in production displays detailed stack traces on errors, revealing source code snippets, environment variables, and settings. \\
+\hline
+\textbf{Category} & Information Disclosure \\
+\hline
+\textbf{Entry Points} & Any URL triggering a 500 error \\
+\hline
+\textbf{Relevant Assets} & A4 (Source Code \& Config), A1 (User Credentials) \\
+\hline
+\textbf{Mitigation} & Ensure \texttt{DEBUG = False} in production environment variables. Use a checklist or automated deployment check. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{3cm}|p{12cm}|}
+\hline
+\textbf{ID} & \textbf{T5} \\
+\hline
+\textbf{Name} & \textbf{DoS via Large File Uploads} \\
+\hline
+\textbf{Description} & An attacker uploads extremely large files to a file upload endpoint, consuming disk space and bandwidth, rendering the server unresponsive. \\
+\hline
+\textbf{Category} & Denial of Service \\
+\hline
+\textbf{Entry Points} & File Upload Forms \\
+\hline
+\textbf{Relevant Assets} & Server Availability \\
+\hline
+\textbf{Mitigation} & Configure web server (Nginx) to limit \texttt{client\_max\_body\_size}. Validate file size and type in Django forms before processing. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{3cm}|p{12cm}|}
+\hline
+\textbf{ID} & \textbf{T6} \\
+\hline
+\textbf{Name} & \textbf{Admin Panel Brute Force} \\
+\hline
+\textbf{Description} & The \texttt{/admin/} login page is often publicly accessible. Attackers can attempt to guess passwords to gain superuser access. \\
+\hline
+\textbf{Category} & Elevation of Privilege \\
+\hline
+\textbf{Entry Points} & \texttt{/admin/login/} URL \\
+\hline
+\textbf{Relevant Assets} & A5 (Admin Interface), A3 (Application Database) \\
+\hline
+\textbf{Mitigation} & Change the default admin URL. Implement rate limiting (e.g., \texttt{django-axes}). Use Multi-Factor Authentication (MFA). \\
+\hline
+\end{longtable}
+
+\section*{Rate the Threats (DREAD)}
+
+\textbf{DREAD Legend:}
+\begin{itemize}
+    \item \textbf{D}amage Potential (1-10)
+    \item \textbf{R}eproducibility (1-10)
+    \item \textbf{E}xploitability (1-10)
+    \item \textbf{A}ffected Users (1-10)
+    \item \textbf{D}iscoverability (1-10)
+\end{itemize}
+
+\begin{longtable}{|l|l|c|c|c|c|c|c|}
+\hline
+\textbf{Threat ID} & \textbf{Threat Name} & \textbf{D} & \textbf{R} & \textbf{E} & \textbf{A} & \textbf{D} & \textbf{Total Risk} \\
+\hline
+\endhead
+\textbf{T1} & Session Hijacking & 8 & 6 & 7 & 9 & 8 & \textbf{38} \\
+\hline
+\textbf{T2} & SQL Injection (Raw) & 9 & 4 & 5 & 10 & 3 & \textbf{31} \\
+\hline
+\textbf{T3} & Lack of Audit Logs & 3 & 10 & 10 & 1 & 10 & \textbf{34} \\
+\hline
+\textbf{T4} & Debug Mode Info Leak & 9 & 10 & 10 & 10 & 10 & \textbf{49} \\
+\hline
+\textbf{T5} & DoS (File Upload) & 5 & 8 & 9 & 10 & 9 & \textbf{41} \\
+\hline
+\textbf{T6} & Admin Brute Force & 9 & 8 & 6 & 1 & 10 & \textbf{34} \\
+\hline
+\end{longtable}
+
+\subsection*{Analysis:}
+\begin{itemize}
+    \item \textbf{T4 (Debug Mode)} is the highest risk because it is trivial to exploit if present and leaks critical secrets that can lead to full system compromise.
+    \item \textbf{T1 (Session Hijacking)} is high risk on open networks (like coffee shops) if SSL is not enforced.
+    \item \textbf{T2 (SQLi)} has high damage potential but is less likely due to Django's secure defaults, making it harder to discover and exploit unless the developer made a specific error.
+\end{itemize}
+
+\end{document}
