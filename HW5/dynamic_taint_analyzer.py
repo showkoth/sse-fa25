@@ -158,7 +158,7 @@ class TaintAnalyzer:
             m = SINK_REGEX.match(code_line)
             if m:
                 # Found SQL execution sink
-                var_name = m.group(1)
+                var_name = m.group(1).strip()
                 
                 # Check if the variable used in SQL execution is tainted
                 if var_name in frame.f_locals:
