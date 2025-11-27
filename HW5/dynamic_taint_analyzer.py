@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """
-Dynamic Taint Analyzer for HW5 Part 2
 This analyzer uses symbolic execution to generate inputs and
 performs dynamic taint analysis to detect SQL injection vulnerabilities.
 """
@@ -67,7 +66,7 @@ class TaintAnalyzer:
                     x_val = model[x].as_long() if model[x] is not None else 0
                     y_val = model[y].as_long() if model[y] is not None else 0
                     
-                    print(f"    ✓ Solution found: x={x_val}, y={y_val}")
+                    print(f"   Solution found: x={x_val}, y={y_val}")
                     
                     # Create test input with SQL injection payload
                     # Using a tainted SQL query that exploits the vulnerability
@@ -84,9 +83,9 @@ class TaintAnalyzer:
                     # Mark the query as tainted (this is our source)
                     self.mark_as_tainted(query)
                 else:
-                    print(f"    ✗ Unsatisfiable")
+                    print(f"    Unsatisfiable")
             except Exception as e:
-                print(f"    ✗ Error solving constraints: {e}")
+                print(f"    Error solving constraints: {e}")
     
     def collect_conditions(self, tree):
         """
@@ -223,9 +222,9 @@ class TaintAnalyzer:
 
 
 def main():
-    """Main function to run the taint analyzer."""
+    """Main function to run the taint analyzer........"""
     print("=" * 70)
-    print("Dynamic Taint Analyzer - HW5 Part 2")
+    print("Dynamic Taint Analyzer......")
     print("=" * 70)
     
     analyzer = TaintAnalyzer()
