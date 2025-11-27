@@ -1,0 +1,47 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{geometry}
+
+\geometry{a4paper, margin=0.7in}
+
+\title{\vspace{-1.5cm}Homework 5}
+\author{Showkot Hossain}
+\date{}
+
+\begin{document}
+
+\maketitle
+\vspace{-0.5cm}
+
+\section*{Part 1: Conceptual Questions}
+\vspace{-0.2cm}
+
+\subsection*{Q1: }
+\vspace{-0.1cm}
+% \texttt{<html>.*?<head>.*?<title>.*?</title>.*?</head>.*?<body[\^{}>]*>.*?</body>.*?</html>}
+No, this regular expression is not safe. The problems are:
+
+\begin{enumerate}
+    \setlength\itemsep{-0.1em}
+    \item \textbf{ReDoS Vulnerability:} The combination of non-greedy quantifiers (\texttt{.*?}) and the character class in \texttt{<body[\^{}>]*>} can cause catastrophic backtracking. If input contains many \texttt{<body} sequences without closing \texttt{>}, the regex engine may take exponential time, causing Denial of Service.
+    
+    \item \textbf{Dot/Newline Issue:} The dot (\texttt{.}) doesn't match newlines by default in many engines. Attackers can bypass validation by inserting newlines, or valid multiline HTML may fail to match.
+    
+    \item \textbf{HTML Parsing Limitations:} Regular expressions cannot properly parse HTML (a context-free language). This regex is easily fooled by nested tags, comments (\texttt{<!-- </html> -->}), or tag-like strings, making it unsafe for security decisions.
+\end{enumerate}
+
+\subsection*{Q2: }
+To reach \texttt{printf("everywhere\textbackslash n")}, the following conditions must be satisfied:
+
+\begin{enumerate}
+    \setlength\itemsep{-0.1em}
+    \item First \texttt{if (x > 5)} is true: $x > 5$
+    \item Second \texttt{if (y > 7)} is false (enter else): $y \le 7$ (i.e., $\neg(y > 7)$)
+    \item Third \texttt{if (x < 20)} is true: $x < 20$
+\end{enumerate}
+
+\vspace{0.1cm}
+\noindent The path condition is: \boxed{(x > 5) \land (y \le 7) \land (x < 20)}
+
+\end{document}

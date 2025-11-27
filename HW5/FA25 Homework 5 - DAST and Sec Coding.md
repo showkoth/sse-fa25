@@ -4,20 +4,6 @@
 
 The purpose of this assignment is to help you demonstrate your understanding of Secure Coding and Dynamic Application Security Testing. This assignment will help prepare you for developing dynamic analyzers for finding vulnerabilities in programs written in Python. 
 
-# **How to Submit it**
-
-Upload your deliverables on Gradescope.   
-You can zip all the files and upload the zip file (Gradescope will automatically extract the files upon submission).  
-*If there is any large file in the submission, gradescope throws an error message. Please contact the instructor and TA immediately.*
-
-## **Deliverables**
-
-* A PDF file with your answers to the conceptual questions in Part 1  
-* The source code for what you implemented in Part 2  
-  * make sure to ***not*** include caching/venv folders with all the compiled code/dependencies (that would make the zip file too large for Gradescope to accept).
-
-# 
-
 # **Task**
 
 ## **Machine Requirements:** 
